@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="29f59f6e-031f-400b-836d-7781628ee234" name="ICD-Coding-CN" url="http://202.197.66.217">
+        <fileTransfer host="202.197.66.217" port="7777" rootFolder="/media/cb201/disk2/feizhh/yy" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="7777" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
