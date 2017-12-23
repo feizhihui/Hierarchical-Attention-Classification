@@ -17,6 +17,9 @@ threshold = 0.3
 max_word_num = 400
 max_word_length = 5
 
+filter_num = 64
+filter_sizes = [1, 3, 5]
+
 
 def length(sequences):
     # 动态展开
@@ -42,11 +45,12 @@ class DeepHan():
             self.input_c = tf.placeholder(tf.int32, [None, None, None], name='input_c')
             self.input_w = tf.placeholder(tf.int32, [None, None], name='input_w')
             self.input_y = tf.placeholder(tf.float32, [None, num_classes], name='input_y')
+            self.keep_prob = tf.placeholder(tf.float32)
 
         # 构建模型
         char_embedded = self.char2vec()  # 构建词向量矩阵，返回对应的词词向量 [None, None, None]=>[None, None, None,embedding_size]
         word_vec = self.word2vec(char_embedded)
-        doc_vec = self.doc2vec_rnn(word_vec)
+        doc_vec = self.doc2vec_cnn(word_vec)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
@@ -144,3 +148,47 @@ class DeepHan():
             # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
             atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
             return atten_output
+
+    def doc2vec_cnn(self, word_vec):
+        weights = {
+            'wc1': tf.Variable(tf.truncated_normal([filter_sizes[0], embedding_size, filter_num], stddev=0.1)),
+            'wc2': tf.Variable(
+                tf.truncated_normal([filter_sizes[1], embedding_size, filter_num], stddev=0.1)),
+            'wc3': tf.Variable(
+                tf.truncated_normal([filter_sizes[2], embedding_size, filter_num], stddev=0.1))
+        }
+
+        biases = {
+            'bc1': tf.Variable(tf.truncated_normal([filter_num], stddev=0.1)),
+            'bc2': tf.Variable(tf.truncated_normal([filter_num], stddev=0.1)),
+            'bc3': tf.Variable(tf.truncated_normal([filter_num], stddev=0.1))
+        }
+
+        def conv1d(x, W, b):
+            x = tf.reshape(x, shape=[-1, max_word_num, 2 * hidden_size])
+            x = tf.nn.conv1d(x, W, 1, padding='SAME')
+            x = tf.nn.bias_add(x, b)
+            # shape=(n,time_steps,filter_num)
+            h = tf.nn.relu(x)
+
+            print('conv size:', h.get_shape().as_list())
+
+            pooled = tf.reduce_max(h, axis=1)
+            print('pooled size:', pooled.get_shape().as_list())
+            return pooled
+
+        def multi_conv(x, weights, biases):
+            # Convolution Layer
+            conv1 = conv1d(x, weights['wc1'], biases['bc1'])
+            conv2 = conv1d(x, weights['wc2'], biases['bc2'])
+            conv3 = conv1d(x, weights['wc3'], biases['bc3'])
+            #  n*time_steps*(3*filter_num)
+            convs = tf.concat([conv1, conv2, conv3], 1)
+            return convs
+
+        print(word_vec.shape)
+        x_convs = multi_conv(word_vec, weights, biases)
+        x_convs = tf.reshape(x_convs, [-1, 3 * filter_num])
+        x_convs = tf.nn.dropout(x_convs, self.keep_prob)
+
+        return x_convs
