@@ -150,11 +150,11 @@ class DeepHan():
 
     def doc2vec_cnn(self, word_vecs):
         weights = {
-            'wc1': tf.Variable(tf.truncated_normal([filter_sizes[0], embedding_size, filter_num], stddev=0.1)),
+            'wc1': tf.Variable(tf.truncated_normal([filter_sizes[0], 2 * hidden_size, filter_num], stddev=0.1)),
             'wc2': tf.Variable(
-                tf.truncated_normal([filter_sizes[1], embedding_size, filter_num], stddev=0.1)),
+                tf.truncated_normal([filter_sizes[1], 2 * hidden_size, filter_num], stddev=0.1)),
             'wc3': tf.Variable(
-                tf.truncated_normal([filter_sizes[2], embedding_size, filter_num], stddev=0.1))
+                tf.truncated_normal([filter_sizes[2], 2 * hidden_size, filter_num], stddev=0.1))
         }
 
         biases = {

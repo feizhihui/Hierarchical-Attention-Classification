@@ -26,7 +26,8 @@ def validataion():
     for i in range(0, loader.test_size, eval_batch_size):
         batch_W = loader.test_W[i:i + eval_batch_size]
         batch_C = loader.test_C[i:i + eval_batch_size]
-        y_pred = sess.run(model.predict, feed_dict={model.input_w: batch_W, model.input_c: batch_C})
+        y_pred = sess.run(model.predict,
+                          feed_dict={model.input_w: batch_W, model.input_c: batch_C, model.keep_prob: 1.})
         outputs.append(y_pred)
     outputs = np.concatenate(outputs, axis=0)
 
@@ -57,7 +58,7 @@ with tf.Session() as sess:
             batch_Y = loader.mapping_label(loader.train_Y[indices:indices + batch_size])
             y_pred, loss, _ = sess.run([model.predict, model.loss, model.train_op],
                                        feed_dict={model.input_w: batch_W, model.input_c: batch_C,
-                                                  model.input_y: batch_Y})
+                                                  model.input_y: batch_Y, model.keep_prob: keep_pro})
             if iter % 10 == 0:
                 print("===Result===")
                 MiP, MiR, MiF, P_NUM, T_NUM = micro_score(y_pred, batch_Y)
