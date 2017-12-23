@@ -47,7 +47,8 @@ class DeepHan():
         word_vec1 = self.word2vec(char_embedded)
         if use_skip_gram:
             word_vec2 = self.skip_gram()
-            word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
+            # word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
+            word_embedded = word_vec2
         else:
             word_embedded = word_vec1
         # doc_vec = self.doc2vec_rnn(word_embedded)
