@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-learning_rate = 0.001
+init_learning_rate = 0.001
 threshold = 0.25
 
 max_word_num = 400
@@ -24,11 +24,13 @@ use_skip_gram = True
 
 
 class DeepHan():
-    def __init__(self, word_embeddings, char_embeddings):
+    def __init__(self, word_embeddings, char_embeddings, decay_steps=96, decay_rate=0.96):
         self.vocab_size = vocab_size
         self.num_classes = num_classes
         self.embedding_size = embedding_size
         self.hidden_size = hidden_size
+        self.decay_steps = decay_steps
+        self.decay_rate = decay_steps
 
         self.char_embeddings = char_embeddings
         self.word_embeddings = word_embeddings
@@ -69,6 +71,8 @@ class DeepHan():
                                                                                name='loss'))
 
         global_step = tf.Variable(0, trainable=False)
+        learning_rate = tf.train.exponential_decay(init_learning_rate, global_step, self.decay_steps, self.decay_rate,
+                                                   staircase=True)
         optimizer = tf.train.AdamOptimizer(learning_rate)
         # RNN中常用的梯度截断，防止出现梯度过大难以求导的现象
         tvars = tf.trainable_variables()
