@@ -77,22 +77,19 @@ class DeepHan():
 
     def char2vec(self):
         with tf.name_scope("char2vec"):
-            embedding_mat = tf.Variable(self.char_embeddings)
+            self.char_embedding_mat = tf.Variable(self.char_embeddings)
             # shape为[batch_size, word_in_doc, char_in_word, embedding_size]
-            char_embedded = tf.nn.embedding_lookup(embedding_mat, self.input_c)
+            char_embedded = tf.nn.embedding_lookup(self.char_embedding_mat, self.input_c)
         return char_embedded
 
     def skip_gram(self):
         with tf.name_scope('word2vec_of_skipgram'):
-            embedding_mat = tf.Variable(self.word_embeddings)
-            word_embedded = tf.nn.embedding_lookup(embedding_mat, self.input_w)
+            self.word_embedding_mat = tf.Variable(self.word_embeddings)
+            word_embedded = tf.nn.embedding_lookup(self.word_embedding_mat, self.input_w)
         return word_embedded
 
     def word2vec(self, char_embedded):
         with tf.name_scope("word2vec"):
-            # embedding_mat = tf.Variable(self.word_embeddings)
-            # word_embedded1 = tf.nn.embedding_lookup(embedding_mat, self.input_w)
-
             # GRU的输入tensor是[batch_size, max_time, ...].在构造句子向量时max_time应该是每个句子的长度，所以这里将
             # batch_size * sent_in_doc当做是batch_size.这样一来，每个GRU的cell处理的都是一个单词的词向量
             # 并最终将一句话中的所有单词的词向量融合（Attention）在一起形成句子向量

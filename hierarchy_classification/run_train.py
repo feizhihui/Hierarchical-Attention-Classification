@@ -56,20 +56,15 @@ with tf.Session() as sess:
             batch_W = loader.train_W[indices:indices + batch_size]
             batch_C = loader.train_C[indices:indices + batch_size]
             batch_Y = loader.mapping_label(loader.train_Y[indices:indices + batch_size])
-            y_pred, loss, _ = sess.run([model.predict, model.loss, model.train_op],
-                                       feed_dict={model.input_w: batch_W, model.input_c: batch_C,
-                                                  model.input_y: batch_Y, model.keep_prob: keep_pro})
+            y_pred, loss, _ = sess.run(
+                [model.predict, model.loss, model.train_op],
+                feed_dict={model.input_w: batch_W, model.input_c: batch_C,
+                           model.input_y: batch_Y, model.keep_prob: keep_pro})
             if iter % 10 == 0:
                 print("===Result===")
                 MiP, MiR, MiF, P_NUM, T_NUM = micro_score(y_pred, batch_Y)
                 print("epoch:%d  iter:%d, mean loss:%.3f,  PNum:%.2f, TNum:%.2f" % (
                     epoch + 1, iter + 1, loss, P_NUM, T_NUM))
                 print("Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f" % (MiP, MiR, MiF))
-
-                seq_len = sess.run(model.seq_len,
-                                   feed_dict={model.input_w: batch_W, model.input_c: batch_C,
-                                              model.input_y: batch_Y, model.keep_prob: keep_pro})
-
-                print(seq_len[:5])
 
         validataion()
