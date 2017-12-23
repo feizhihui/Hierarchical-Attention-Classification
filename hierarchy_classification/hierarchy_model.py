@@ -148,7 +148,7 @@ class DeepHan():
             atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
             return atten_output
 
-    def doc2vec_cnn(self, word_vec):
+    def doc2vec_cnn(self, word_vecs):
         weights = {
             'wc1': tf.Variable(tf.truncated_normal([filter_sizes[0], embedding_size, filter_num], stddev=0.1)),
             'wc2': tf.Variable(
@@ -185,8 +185,8 @@ class DeepHan():
             convs = tf.concat([conv1, conv2, conv3], 1)
             return convs
 
-        print(word_vec.shape)
-        x_convs = multi_conv(word_vec, weights, biases)
+        input = tf.reshape(word_vecs, [-1, max_word_num, self.hidden_size * 2])
+        x_convs = multi_conv(input, weights, biases)
         x_convs = tf.reshape(x_convs, [-1, 3 * filter_num])
         x_convs = tf.nn.dropout(x_convs, self.keep_prob)
 
