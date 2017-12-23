@@ -9,7 +9,7 @@ char_size = 1941
 num_classes = 488
 embedding_size = 128
 hidden_size = 50
-learning_rate = 0.01
+learning_rate = 0.05
 grad_clip = 5
 
 threshold = 0.3
@@ -51,20 +51,16 @@ class DeepHan():
         self.out = out
         ones_t = tf.ones_like(out)
         zeros_t = tf.zeros_like(out)
-        self.prediction = tf.cast(tf.where(tf.greater(out, threshold), ones_t, zeros_t),
-                                        tf.int32)
+        self.predict = tf.cast(tf.where(tf.greater(tf.sigmoid(out), threshold), ones_t, zeros_t),
+                               tf.int32)
 
         self.back_propagate()
 
     def back_propagate(self):
         with tf.name_scope('loss'):
-            self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.input_y,
+            self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=self.input_y,
                                                                                logits=self.out,
                                                                                name='loss'))
-        with tf.name_scope('accuracy'):
-            predict = tf.argmax(self.out, axis=1, name='predict')
-            label = tf.argmax(self.input_y, axis=1, name='label')
-            self.acc = tf.reduce_mean(tf.cast(tf.equal(predict, label), tf.float32))
 
         global_step = tf.Variable(0, trainable=False)
         optimizer = tf.train.AdamOptimizer(learning_rate)
@@ -76,7 +72,6 @@ class DeepHan():
 
     def char2vec(self):
         with tf.name_scope("char2vec"):
-            print(self.char_embeddings.shape)
             embedding_mat = tf.Variable(self.char_embeddings)
             # shape为[batch_size, word_in_doc, char_in_word, embedding_size]
             char_embedded = tf.nn.embedding_lookup(embedding_mat, self.input_c)
@@ -136,11 +131,8 @@ class DeepHan():
             u_context = tf.Variable(tf.truncated_normal([self.hidden_size * 2]), name='u_context')
             # 使用一个全连接层编码GRU的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
             h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
-            print(h.get_shape().as_list())
             # alpha shape为[batch_size, max_time, 1]
             alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
-            print(alpha.get_shape().as_list())
             # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
             atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
-            print(atten_output.get_shape().as_list())
             return atten_output

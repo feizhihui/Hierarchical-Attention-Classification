@@ -30,10 +30,10 @@ for row in all_text:
             char_in_word = []
             for c in word:
                 if c in char_dict:
-                    char_in_word.append(c)
+                    char_in_word.append(char_dict[c])
             char_row.append(char_in_word)
     all_word_tokens.append(token_row)
-    all_char_tokens.append(all_char_tokens)
+    all_char_tokens.append(char_row)
 
 word_tokens_matrix = np.zeros([n, word_size], dtype=np.int32)
 char_tokens_matrix = np.zeros([n, word_size, char_size], dtype=np.int32)
@@ -42,9 +42,10 @@ for sample_i in range(n):
     for word_j in range(word_size):
         if word_j >= len(all_word_tokens[sample_i]): break
         word_tokens_matrix[sample_i, word_j] = all_word_tokens[sample_i][word_j]
+        raw_word = all_text[sample_i][word_j]
         for char_k in range(char_size):
-            if char_k >= len(char_tokens_matrix[sample_i][word_j]): break
-            char_tokens_matrix[sample_i, word_j, char_k] = char_tokens_matrix[sample_i][word_j][char_k]
+            if char_k >= len(all_char_tokens[sample_i][word_j]): break
+            char_tokens_matrix[sample_i, word_j, char_k] = all_char_tokens[sample_i][word_j][char_k]
 
 code_tokens_matrix = []
 for codes in all_code:

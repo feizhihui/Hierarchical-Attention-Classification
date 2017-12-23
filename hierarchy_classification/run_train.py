@@ -8,7 +8,7 @@ import os
 # LD_LIBRARY_PATH	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
-batch_size = 64
+batch_size = 128
 eval_batch_size = 1024
 
 epoch_num = 7
@@ -26,7 +26,7 @@ def validataion():
     for i in range(0, loader.test_size, eval_batch_size):
         batch_W = loader.test_W[i:i + eval_batch_size]
         batch_C = loader.test_C[i:i + eval_batch_size]
-        y_pred = sess.run(model.prediction, feed_dict={model.input_w: batch_W, model.input_c: batch_C})
+        y_pred = sess.run(model.predict, feed_dict={model.input_w: batch_W, model.input_c: batch_C})
         outputs.append(y_pred)
     outputs = np.concatenate(outputs, axis=0)
 
@@ -36,10 +36,7 @@ def validataion():
 
 
 def micro_score(output, label):
-    print('output', output.shape)
-    print('label', label.shape)
     N = len(output)
-
     total_P = np.sum(output)
     total_R = np.sum(label)
     TP = float(np.sum(output * label))
@@ -49,8 +46,6 @@ def micro_score(output, label):
     return MiP, MiR, MiF, total_P / N, total_R / N
 
 
-saver = tf.train.Saver()
-filename = '../MODEL/TransferModel'
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     print('begin training:')
@@ -60,9 +55,9 @@ with tf.Session() as sess:
             batch_W = loader.train_W[indices:indices + batch_size]
             batch_C = loader.train_C[indices:indices + batch_size]
             batch_Y = loader.mapping_label(loader.train_Y[indices:indices + batch_size])
-            y_pred, acc, loss, _ = sess.run([model.prediction, model.acc, model.loss, model.train_op],
-                                            feed_dict={model.input_w: batch_W, model.input_c: batch_C,
-                                                       model.input_y: batch_Y})
+            y_pred, loss, _ = sess.run([model.predict, model.loss, model.train_op],
+                                       feed_dict={model.input_w: batch_W, model.input_c: batch_C,
+                                                  model.input_y: batch_Y})
             if iter % 10 == 0:
                 print("===Result===")
                 MiP, MiR, MiF, P_NUM, T_NUM = micro_score(y_pred, batch_Y)
