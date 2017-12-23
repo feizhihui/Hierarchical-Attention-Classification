@@ -54,6 +54,9 @@ for codes in all_code:
         token_row.append(code_dict[code])
     code_tokens_matrix.append(token_row)
 
-np.save('../cache/word_tokens_matrix.npy', word_tokens_matrix)
-np.save('../cache/char_tokens_matrix.npy', char_tokens_matrix)
-np.save('../cache/code_tokens_matrix.npy', np.array(code_tokens_matrix))
+mark = list(range(len(word_tokens_matrix)))
+np.random.shuffle(mark)
+
+np.save('../cache/word_tokens_matrix.npy', word_tokens_matrix[mark])
+np.save('../cache/char_tokens_matrix.npy', char_tokens_matrix[mark])
+np.save('../cache/code_tokens_matrix.npy', np.array(code_tokens_matrix)[mark])
