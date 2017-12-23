@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.005
+init_learning_rate = 0.001
 threshold = 0.25
 
 max_word_num = 400
@@ -24,7 +24,7 @@ use_skip_gram = True
 
 
 class DeepHan():
-    def __init__(self, word_embeddings, char_embeddings, decay_steps=96, decay_rate=0.96):
+    def __init__(self, word_embeddings, char_embeddings, decay_steps=96, decay_rate=0.99):
         self.vocab_size = vocab_size
         self.num_classes = num_classes
         self.embedding_size = embedding_size
