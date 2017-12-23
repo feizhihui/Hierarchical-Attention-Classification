@@ -9,7 +9,7 @@ char_size = 1941
 num_classes = 488
 embedding_size = 128
 hidden_size = 50
-learning_rate = 0.05
+learning_rate = 0.01
 grad_clip = 5
 
 threshold = 0.3
@@ -77,25 +77,33 @@ class DeepHan():
             char_embedded = tf.nn.embedding_lookup(embedding_mat, self.input_c)
         return char_embedded
 
-    def word2vec(self, word_embedded):
+    def word2vec(self, char_embedded):
         with tf.name_scope("word2vec"):
+            # embedding_mat = tf.Variable(self.word_embeddings)
+            # word_embedded1 = tf.nn.embedding_lookup(embedding_mat, self.input_w)
+
             # GRU的输入tensor是[batch_size, max_time, ...].在构造句子向量时max_time应该是每个句子的长度，所以这里将
             # batch_size * sent_in_doc当做是batch_size.这样一来，每个GRU的cell处理的都是一个单词的词向量
             # 并最终将一句话中的所有单词的词向量融合（Attention）在一起形成句子向量
 
             # shape为[batch_size*sent_in_doc, word_in_sent, embedding_size]
-            word_embedded = tf.reshape(word_embedded, [-1, max_word_length, self.embedding_size])
+            char_embedded = tf.reshape(char_embedded, [-1, max_word_length, self.embedding_size])
             # shape为[batch_size*sent_in_doce, word_in_sent, hidden_size*2]
-            word_encoded = self.BidirectionalGRUEncoder(word_embedded, name='word_encoder')
+            word_encoded = self.BidirectionalGRUEncoder(char_embedded, name='word_encoder')
             # shape为[batch_size*sent_in_doc, hidden_size*2]
-            sent_vec = self.AttentionLayer(word_encoded, name='word_attention')
-            return sent_vec
+            word_vec = self.AttentionLayer(word_encoded, name='word_attention')
+            return word_vec
 
     def doc2vec(self, word_vecs):
+        with tf.name_scope('word2vec_of_skipgram'):
+            embedding_mat = tf.Variable(self.word_embeddings)
+            word_embedded1 = tf.nn.embedding_lookup(embedding_mat, self.input_w)
+
         with tf.name_scope("doc2vec"):
-            word_vecs = tf.reshape(word_vecs, [-1, max_word_num, self.hidden_size * 2])
+            word_embedded2 = tf.reshape(word_vecs, [-1, max_word_num, self.hidden_size * 2])
+            word_embedded = tf.concat([word_embedded1, word_embedded2], axis=2)
             # shape为[batch_size, sent_in_doc, hidden_size*2]
-            doc_encoded = self.BidirectionalGRUEncoder(word_vecs, name='sent_encoder')
+            doc_encoded = self.BidirectionalGRUEncoder(word_embedded, name='sent_encoder')
             # shape为[batch_szie, hidden_szie*2]
             doc_vec = self.AttentionLayer(doc_encoded, name='sent_attention')
             return doc_vec
