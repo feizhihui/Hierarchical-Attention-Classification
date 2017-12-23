@@ -70,6 +70,6 @@ with tf.Session() as sess:
                                    feed_dict={model.input_w: batch_W, model.input_c: batch_C,
                                               model.input_y: batch_Y, model.keep_prob: keep_pro})
 
-                print(sess.run(model.seq_len)[:5])
+                print(seq_len[:5])
 
         validataion()
