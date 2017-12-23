@@ -11,8 +11,8 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-learning_rate = 0.005
-threshold = 0.3
+learning_rate = 0.001
+threshold = 0.25
 
 max_word_num = 400
 max_word_length = 5
