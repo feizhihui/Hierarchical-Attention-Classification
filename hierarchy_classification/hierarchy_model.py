@@ -8,7 +8,7 @@ vocab_size = 7906
 char_size = 1941
 num_classes = 488
 embedding_size = 128
-hidden_size = 50
+hidden_size = 200
 learning_rate = 0.05
 grad_clip = 5
 
