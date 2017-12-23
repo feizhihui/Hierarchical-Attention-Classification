@@ -8,7 +8,7 @@ vocab_size = 7906
 char_size = 1941
 num_classes = 488
 embedding_size = 128
-hidden_size = 200
+hidden_size = 100
 learning_rate = 0.05
 grad_clip = 5
 
@@ -131,6 +131,7 @@ class DeepHan():
     # 输出的状态向量按权值相加
     def AttentionLayer(self, inputs, name):
         # inputs是GRU的输出，size是[batch_size, max_time, encoder_size(hidden_size * 2)]
+        print(inputs.shape)
         with tf.variable_scope(name):
             # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
             # 因为使用双向GRU，所以其长度为2×hidden_szie
