@@ -66,6 +66,10 @@ with tf.Session() as sess:
                     epoch + 1, iter + 1, loss, P_NUM, T_NUM))
                 print("Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f" % (MiP, MiR, MiF))
 
+                seq_len = sess.run(model.seq_len,
+                                   feed_dict={model.input_w: batch_W, model.input_c: batch_C,
+                                              model.input_y: batch_Y, model.keep_prob: keep_pro})
+
                 print(sess.run(model.seq_len)[:5])
 
         validataion()
