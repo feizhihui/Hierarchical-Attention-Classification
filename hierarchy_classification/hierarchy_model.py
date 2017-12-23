@@ -184,11 +184,8 @@ class DeepHan():
             x = tf.nn.bias_add(x, b)
             # shape=(n,time_steps,filter_num)
             h = tf.nn.relu(x)
-
-            print('conv size:', h.get_shape().as_list())
-
             pooled = tf.reduce_max(h, axis=1)
-            print('pooled size:', pooled.get_shape().as_list())
+
             return pooled
 
         def multi_conv(x, weights, biases):

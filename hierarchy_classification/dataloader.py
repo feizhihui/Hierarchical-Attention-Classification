@@ -2,7 +2,7 @@
 import numpy as np
 import pickle
 
-train_eval_rate = 0.8
+train_eval_rate = 0.9
 num_classes = 488
 
 
