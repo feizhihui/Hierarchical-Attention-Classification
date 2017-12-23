@@ -9,7 +9,7 @@ char_size = 1941
 num_classes = 488
 embedding_size = 128
 hidden_size = 50
-learning_rate = 0.01
+learning_rate = 0.05
 grad_clip = 5
 
 threshold = 0.3
@@ -46,7 +46,7 @@ class DeepHan():
         # 构建模型
         char_embedded = self.char2vec()  # 构建词向量矩阵，返回对应的词词向量 [None, None, None]=>[None, None, None,embedding_size]
         word_vec = self.word2vec(char_embedded)
-        doc_vec = self.doc2vec(word_vec)
+        doc_vec = self.doc2vec_rnn(word_vec)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
@@ -86,7 +86,6 @@ class DeepHan():
             # batch_size * sent_in_doc当做是batch_size.这样一来，每个GRU的cell处理的都是一个单词的词向量
             # 并最终将一句话中的所有单词的词向量融合（Attention）在一起形成句子向量
 
-            # shape为[batch_size*sent_in_doc, word_in_sent, embedding_size]
             char_embedded = tf.reshape(char_embedded, [-1, max_word_length, self.embedding_size])
             # shape为[batch_size*sent_in_doce, word_in_sent, hidden_size*2]
             word_encoded = self.BidirectionalGRUEncoder(char_embedded, name='word_encoder')
@@ -94,7 +93,7 @@ class DeepHan():
             word_vec = self.AttentionLayer(word_encoded, name='word_attention')
             return word_vec
 
-    def doc2vec(self, word_vecs):
+    def doc2vec_rnn(self, word_vecs):
         with tf.name_scope('word2vec_of_skipgram'):
             embedding_mat = tf.Variable(self.word_embeddings)
             word_embedded1 = tf.nn.embedding_lookup(embedding_mat, self.input_w)
