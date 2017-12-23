@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-learning_rate = 0.001
+learning_rate = 0.005
 threshold = 0.3
 
 max_word_num = 400
@@ -20,12 +20,7 @@ max_word_length = 5
 filter_num = 64
 filter_sizes = [1, 3, 5]
 
-
-def length(sequences):
-    # 动态展开
-    used = tf.sign(tf.reduce_max(tf.abs(sequences), reduction_indices=2))
-    seq_len = tf.reduce_sum(used, reduction_indices=1)
-    return tf.cast(seq_len, tf.int32)
+use_skip_gram = True
 
 
 class DeepHan():
@@ -50,9 +45,11 @@ class DeepHan():
         # 构建模型
         char_embedded = self.char2vec()  # 构建词向量矩阵，返回对应的词词向量 [None, None, None]=>[None, None, None,embedding_size]
         word_vec1 = self.word2vec(char_embedded)
-        word_vec2 = self.skip_gram()
-        word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
-
+        if use_skip_gram:
+            word_vec2 = self.skip_gram()
+            word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
+        else:
+            word_embedded = word_vec1
         # doc_vec = self.doc2vec_rnn(word_embedded)
         doc_vec = self.doc2vec_cnn(word_embedded)
         out = self.classifer(doc_vec)
@@ -133,7 +130,7 @@ class DeepHan():
             ((fw_outputs, bw_outputs), (_, _)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=GRU_cell_fw,
                                                                                  cell_bw=GRU_cell_bw,
                                                                                  inputs=inputs,
-                                                                                 sequence_length=length(inputs),
+                                                                                 sequence_length=self.length(inputs),
                                                                                  dtype=tf.float32)
             # outputs的size是[batch_size*sent_in_doc, max_time, hidden_size*2]
             outputs = tf.concat((fw_outputs, bw_outputs), 2)
@@ -155,13 +152,22 @@ class DeepHan():
             atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
             return atten_output
 
+    def length(self, sequences):
+        # 动态展开
+        used = tf.sign(tf.reduce_max(tf.abs(sequences), reduction_indices=2))
+        seq_len = tf.reduce_sum(used, reduction_indices=1)
+        self.seq_len = tf.cast(seq_len, tf.int32)
+        return self.seq_len
+
     def doc2vec_cnn(self, word_vecs):
+        width = word_vecs.get_shape().as_list()[-1]
         weights = {
-            'wc1': tf.Variable(tf.truncated_normal([filter_sizes[0], 2 * hidden_size, filter_num], stddev=0.1)),
+            'wc1': tf.Variable(
+                tf.truncated_normal([filter_sizes[0], width, filter_num], stddev=0.1)),
             'wc2': tf.Variable(
-                tf.truncated_normal([filter_sizes[1], 2 * hidden_size, filter_num], stddev=0.1)),
+                tf.truncated_normal([filter_sizes[1], width, filter_num], stddev=0.1)),
             'wc3': tf.Variable(
-                tf.truncated_normal([filter_sizes[2], 2 * hidden_size, filter_num], stddev=0.1))
+                tf.truncated_normal([filter_sizes[2], width, filter_num], stddev=0.1))
         }
 
         biases = {
@@ -171,7 +177,7 @@ class DeepHan():
         }
 
         def conv1d(x, W, b):
-            x = tf.reshape(x, shape=[-1, max_word_num, 2 * hidden_size])
+            x = tf.reshape(x, shape=[-1, max_word_num, width])
             x = tf.nn.conv1d(x, W, 1, padding='SAME')
             x = tf.nn.bias_add(x, b)
             # shape=(n,time_steps,filter_num)
@@ -192,7 +198,7 @@ class DeepHan():
             convs = tf.concat([conv1, conv2, conv3], 1)
             return convs
 
-        input = tf.reshape(word_vecs, [-1, max_word_num, self.hidden_size * 2])
+        input = tf.reshape(word_vecs, [-1, max_word_num, width])
         x_convs = multi_conv(input, weights, biases)
         x_convs = tf.reshape(x_convs, [-1, 3 * filter_num])
         x_convs = tf.nn.dropout(x_convs, self.keep_prob)
