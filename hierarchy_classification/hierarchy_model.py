@@ -30,7 +30,7 @@ class DeepHan():
         self.embedding_size = embedding_size
         self.hidden_size = hidden_size
         self.decay_steps = decay_steps
-        self.decay_rate = decay_steps
+        self.decay_rate = decay_rate
 
         self.char_embeddings = char_embeddings
         self.word_embeddings = word_embeddings
