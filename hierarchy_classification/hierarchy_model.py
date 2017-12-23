@@ -135,7 +135,6 @@ class DeepHan():
     # 输出的状态向量按权值相加
     def AttentionLayer(self, inputs, name):
         # inputs是GRU的输出，size是[batch_size, max_time, encoder_size(hidden_size * 2)]
-        print(inputs.shape)
         with tf.variable_scope(name):
             # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
             # 因为使用双向GRU，所以其长度为2×hidden_szie
