@@ -47,7 +47,10 @@ def micro_score(output, label):
     return MiP, MiR, MiF, total_P / N, total_R / N
 
 
-with tf.Session() as sess:
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+
+with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
     print('begin training:')
     for epoch in range(epoch_num):
