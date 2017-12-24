@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.001
+init_learning_rate = 0.002  # CNN 0.001
 threshold = 0.25
 
 max_word_num = 400
@@ -24,7 +24,7 @@ use_skip_gram = True
 
 
 class DeepHan():
-    def __init__(self, word_embeddings, char_embeddings, decay_steps=96, decay_rate=0.99):
+    def __init__(self, word_embeddings, char_embeddings, decay_steps=96, decay_rate=0.98):
         self.vocab_size = vocab_size
         self.num_classes = num_classes
         self.embedding_size = embedding_size
@@ -49,12 +49,12 @@ class DeepHan():
         word_vec1 = self.word2vec(char_embedded)
         if use_skip_gram:
             word_vec2 = self.skip_gram()
-            # word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
-            word_embedded = word_vec2
+            word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
+            # word_embedded = word_vec2
         else:
             word_embedded = word_vec1
-        # doc_vec = self.doc2vec_rnn(word_embedded)
-        doc_vec = self.doc2vec_cnn(word_embedded)
+        doc_vec = self.doc2vec_rnn(word_embedded)
+        # doc_vec = self.doc2vec_cnn(word_embedded)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)

@@ -67,4 +67,5 @@ with tf.Session() as sess:
                     epoch + 1, iter + 1, loss, P_NUM, T_NUM))
                 print("Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f" % (MiP, MiR, MiF))
 
-        validataion()
+        if epoch >= epoch_num / 2:
+            validataion()
