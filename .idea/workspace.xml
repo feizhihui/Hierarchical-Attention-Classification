@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a866d9fe-7722-4c7e-9ead-3e4e9d7acc8a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hierarchy_classification/hierarchy_model.py" afterPath="$PROJECT_DIR$/hierarchy_classification/hierarchy_model.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/hierarchy_classification/dataloader.py" afterPath="$PROJECT_DIR$/hierarchy_classification/dataloader.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,8 +14,8 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/ICD_Coding_CN$char2vec.coverage" NAME="char2vec Coverage Results" MODIFIED="1514206972447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_preprocess" />
     <SUITE FILE_PATH="coverage/ICD_Coding_CN$make_dict.coverage" NAME="make_dict Coverage Results" MODIFIED="1514207389581" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_preprocess" />
-    <SUITE FILE_PATH="coverage/ICD_Coding_CN$dataloader.coverage" NAME="dataloader Coverage Results" MODIFIED="1514025848318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hierarchy_classification" />
-    <SUITE FILE_PATH="coverage/ICD_Coding_CN$run_train.coverage" NAME="run_train Coverage Results" MODIFIED="1514207208510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hierarchy_classification" />
+    <SUITE FILE_PATH="coverage/ICD_Coding_CN$dataloader.coverage" NAME="dataloader Coverage Results" MODIFIED="1514207456187" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hierarchy_classification" />
+    <SUITE FILE_PATH="coverage/ICD_Coding_CN$run_train.coverage" NAME="run_train Coverage Results" MODIFIED="1514207460557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hierarchy_classification" />
     <SUITE FILE_PATH="coverage/ICD_Coding_CN$tokenize.coverage" NAME="tokenize Coverage Results" MODIFIED="1513911509688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_preprocess" />
     <SUITE FILE_PATH="coverage/ICD_Coding_CN$hierarchy_model.coverage" NAME="hierarchy_model Coverage Results" MODIFIED="1514005577017" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hierarchy_classification" />
     <SUITE FILE_PATH="coverage/ICD_Coding_CN$read_data.coverage" NAME="read_data Coverage Results" MODIFIED="1514207307835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_preprocess" />
@@ -24,11 +24,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="hierarchy_model.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="hierarchy_model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hierarchy_classification/hierarchy_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="92">
-              <caret line="7" column="17" lean-forward="true" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+            <state relative-caret-position="138">
+              <caret line="9" column="17" lean-forward="false" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="17" />
               <folding>
                 <element signature="e#15#38#0" expanded="true" />
               </folding>
@@ -83,8 +83,8 @@
       <file leaf-file-name="run_train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/hierarchy_classification/run_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1284">
-              <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
+            <state relative-caret-position="368">
+              <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
               <folding>
                 <element signature="e#17#40#0" expanded="true" />
               </folding>
@@ -92,11 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dataloader.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="dataloader.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/hierarchy_classification/dataloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+            <state relative-caret-position="46">
+              <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -145,10 +145,10 @@
         <option value="$PROJECT_DIR$/data_preprocess/tokenize.py" />
         <option value="$PROJECT_DIR$/data_preprocess/make_dict.py" />
         <option value="$PROJECT_DIR$/data_preprocess/data_tokenize.py" />
-        <option value="$PROJECT_DIR$/hierarchy_classification/dataloader.py" />
         <option value="$PROJECT_DIR$/hierarchy_classification/run_train.py" />
         <option value="$PROJECT_DIR$/data_preprocess/read_data.py" />
         <option value="$PROJECT_DIR$/hierarchy_classification/hierarchy_model.py" />
+        <option value="$PROJECT_DIR$/hierarchy_classification/dataloader.py" />
       </list>
     </option>
   </component>
@@ -238,25 +238,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.make_dict">
-    <configuration name="char2vec" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data_preprocess" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="ICD-Coding-CN" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_preprocess/char2vec.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
+  <component name="RunManager" selected="Python.run_train">
     <configuration name="data_tokenize" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -271,6 +253,24 @@
       <module name="ICD-Coding-CN" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data_preprocess/data_tokenize.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="dataloader" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/hierarchy_classification" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="ICD-Coding-CN" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/hierarchy_classification/dataloader.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -331,19 +331,19 @@
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.char2vec" />
-      <item index="1" class="java.lang.String" itemvalue="Python.make_dict" />
-      <item index="2" class="java.lang.String" itemvalue="Python.data_tokenize" />
-      <item index="3" class="java.lang.String" itemvalue="Python.run_train" />
-      <item index="4" class="java.lang.String" itemvalue="Python.read_data" />
+      <item index="0" class="java.lang.String" itemvalue="Python.make_dict" />
+      <item index="1" class="java.lang.String" itemvalue="Python.data_tokenize" />
+      <item index="2" class="java.lang.String" itemvalue="Python.run_train" />
+      <item index="3" class="java.lang.String" itemvalue="Python.read_data" />
+      <item index="4" class="java.lang.String" itemvalue="Python.dataloader" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.make_dict" />
-        <item index="1" class="java.lang.String" itemvalue="Python.read_data" />
-        <item index="2" class="java.lang.String" itemvalue="Python.run_train" />
-        <item index="3" class="java.lang.String" itemvalue="Python.data_tokenize" />
-        <item index="4" class="java.lang.String" itemvalue="Python.char2vec" />
+        <item index="0" class="java.lang.String" itemvalue="Python.run_train" />
+        <item index="1" class="java.lang.String" itemvalue="Python.dataloader" />
+        <item index="2" class="java.lang.String" itemvalue="Python.make_dict" />
+        <item index="3" class="java.lang.String" itemvalue="Python.read_data" />
+        <item index="4" class="java.lang.String" itemvalue="Python.data_tokenize" />
       </list>
     </recent_temporary>
   </component>
@@ -369,7 +369,7 @@
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.314367" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40967283" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2119488" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26610824" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -672,14 +672,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/hierarchy_classification/dataloader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data_preprocess/read_data.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="86">
@@ -695,16 +687,6 @@
         <state relative-caret-position="273">
           <caret line="22" column="22" lean-forward="true" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/hierarchy_classification/run_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1284">
-          <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
-          <folding>
-            <element signature="e#17#40#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -728,11 +710,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/hierarchy_classification/hierarchy_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="7" column="17" lean-forward="true" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+        <state relative-caret-position="138">
+          <caret line="9" column="17" lean-forward="false" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="17" />
           <folding>
             <element signature="e#15#38#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hierarchy_classification/run_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding>
+            <element signature="e#17#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/hierarchy_classification/dataloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="3" column="0" lean-forward="true" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

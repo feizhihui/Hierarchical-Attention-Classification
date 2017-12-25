@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 
 train_eval_rate = 0.9
-num_classes = 488
+num_classes = 737
 
 
 class DataLoader(object):
