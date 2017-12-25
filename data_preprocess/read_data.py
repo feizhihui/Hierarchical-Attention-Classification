@@ -11,7 +11,7 @@ all_char = []  # chinese character
 code_set = set()
 word_size = []
 m = re.compile(r'^[a-z]+$')
-with open('../data/dataset.xy', 'r', encoding='utf-8') as file:
+with open('../data/XY3.preprocess', 'r', encoding='utf-8') as file:
     for line in file.readlines():
         columns = line.lower().split('|')
         code_list = columns[1].split(',')
