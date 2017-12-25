@@ -44,3 +44,4 @@ code_dict = {c: i for i, c in enumerate(list(code_set))}
 
 with open('../cache/code_dict.pkl', 'wb') as file:
     pickle.dump(code_dict, file)
+print('ICD-9 code number:', len(code_dict))
