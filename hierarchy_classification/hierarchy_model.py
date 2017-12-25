@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.002  # CNN 0.001
+init_learning_rate = 0.002  # CNN 0.001  # RNN 0.002
 threshold = 0.25
 
 max_word_num = 400
