@@ -5,7 +5,7 @@ from hierarchy_model import DeepHan
 import numpy as np
 import os
 
-# LD_LIBRARY_PATH	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
+# LD_LIBRARY_PATH   	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 batch_size = 128
