@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.002  # CNN 0.001  # RNN 0.002
+init_learning_rate = 0.001  # CNN 0.001  # RNN 0.002
 threshold = 0.25
 
 max_word_num = 400
@@ -53,8 +53,8 @@ class DeepHan():
             # word_embedded = word_vec2
         else:
             word_embedded = word_vec1
-        doc_vec = self.doc2vec_rnn(word_embedded)
-        # doc_vec = self.doc2vec_cnn(word_embedded)
+        # doc_vec = self.doc2vec_rnn(word_embedded)
+        doc_vec = self.doc2vec_cnn(word_embedded)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
