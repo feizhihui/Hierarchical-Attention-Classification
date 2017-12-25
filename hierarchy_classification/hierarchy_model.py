@@ -4,9 +4,11 @@ import tensorflow as tf
 from tensorflow.contrib import rnn
 from tensorflow.contrib import layers
 
-vocab_size = 7906
-char_size = 1941
-num_classes = 488
+# =============== may be change
+vocab_size = 7200
+char_size = 1800
+num_classes = 737
+# =====================
 embedding_size = 128
 hidden_size = 100
 
