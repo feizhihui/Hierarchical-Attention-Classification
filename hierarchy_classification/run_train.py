@@ -3,10 +3,11 @@ import tensorflow as tf
 from dataloader import DataLoader
 from hierarchy_model import DeepHan
 import numpy as np
+import sklearn.metrics as metrics
 import os
 
 # LD_LIBRARY_PATH   	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 batch_size = 128
 eval_batch_size = 1024
@@ -31,9 +32,10 @@ def validataion():
         outputs.append(y_pred)
     outputs = np.concatenate(outputs, axis=0)
 
-    MiP, MiR, MiF, P_NUM, T_NUM = micro_score(outputs, loader.mapping_label(loader.test_Y))
+    MiP, MiR, MiF, P_NUM, T_NUM, hamming_loss = micro_score(outputs, loader.mapping_label(loader.test_Y))
     print(">>>>>>>> Final Result:  PredictNum:%.2f, TrueNum:%.2f" % (P_NUM, T_NUM))
-    print(">>>>>>>> Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f" % (MiP, MiR, MiF))
+    print(">>>>>>>> Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f, Hamming Loss:.5f%" % (
+        MiP, MiR, MiF, hamming_loss))
 
 
 def micro_score(output, label):
@@ -44,7 +46,8 @@ def micro_score(output, label):
     MiP = TP / max(total_P, 1e-12)
     MiR = TP / max(total_R, 1e-12)
     MiF = 2 * MiP * MiR / max((MiP + MiR), 1e-12)
-    return MiP, MiR, MiF, total_P / N, total_R / N
+    hamming_loss = metrics.hamming_loss(label, output)
+    return MiP, MiR, MiF, total_P / N, total_R / N, hamming_loss
 
 
 config = tf.ConfigProto()
@@ -65,10 +68,11 @@ with tf.Session(config=config) as sess:
                            model.input_y: batch_Y, model.keep_prob: keep_pro})
             if iter % 10 == 0:
                 print("===Result===")
-                MiP, MiR, MiF, P_NUM, T_NUM = micro_score(y_pred, batch_Y)
+                MiP, MiR, MiF, P_NUM, T_NUM, hamming_loss = micro_score(y_pred, batch_Y)
                 print("epoch:%d  iter:%d, mean loss:%.3f,  PNum:%.2f, TNum:%.2f" % (
                     epoch + 1, iter + 1, loss, P_NUM, T_NUM))
-                print("Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f" % (MiP, MiR, MiF))
+                print("Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f, Hamming Loss:%.5f" % (
+                    MiP, MiR, MiF, hamming_loss))
 
         if epoch >= epoch_num / 2:
             validataion()

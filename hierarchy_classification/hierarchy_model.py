@@ -5,8 +5,6 @@ from tensorflow.contrib import rnn
 from tensorflow.contrib import layers
 
 # =============== may be change
-vocab_size = 7200
-char_size = 1800
 num_classes = 737
 # =====================
 embedding_size = 128
@@ -27,7 +25,6 @@ use_skip_gram = True
 
 class DeepHan():
     def __init__(self, word_embeddings, char_embeddings, decay_steps=96, decay_rate=0.98):
-        self.vocab_size = vocab_size
         self.num_classes = num_classes
         self.embedding_size = embedding_size
         self.hidden_size = hidden_size
@@ -97,13 +94,13 @@ class DeepHan():
 
     def word2vec(self, char_embedded):
         with tf.name_scope("word2vec"):
-            # GRU的输入tensor是[batch_size, max_time, ...].在构造句子向量时max_time应该是每个句子的长度，所以这里将
-            # batch_size * sent_in_doc当做是batch_size.这样一来，每个GRU的cell处理的都是一个单词的词向量
+            # LSTM的输入tensor是[batch_size, max_time, ...].在构造句子向量时max_time应该是每个句子的长度，所以这里将
+            # batch_size * sent_in_doc当做是batch_size.这样一来，每个LSTM的cell处理的都是一个单词的词向量
             # 并最终将一句话中的所有单词的词向量融合（Attention）在一起形成句子向量
 
             char_embedded = tf.reshape(char_embedded, [-1, max_word_length, self.embedding_size])
             # shape为[batch_size*sent_in_doce, word_in_sent, hidden_size*2]
-            word_encoded = self.BidirectionalGRUEncoder(char_embedded, name='word_encoder')
+            word_encoded = self.BidirectionalLSTMEncoder(char_embedded, name='word_encoder')
             # shape为[batch_size*sent_in_doc, hidden_size*2]
             word_vec = self.AttentionLayer(word_encoded, name='word_attention')
 
@@ -114,7 +111,7 @@ class DeepHan():
     def doc2vec_rnn(self, word_vecs):
         with tf.name_scope("doc2vec"):
             # shape为[batch_size, sent_in_doc, hidden_size*2]
-            doc_encoded = self.BidirectionalGRUEncoder(word_vecs, name='sent_encoder')
+            doc_encoded = self.BidirectionalLSTMEncoder(word_vecs, name='sent_encoder')
             # shape为[batch_szie, hidden_szie*2]
             doc_vec = self.AttentionLayer(doc_encoded, name='sent_attention')
             return doc_vec
@@ -124,15 +121,15 @@ class DeepHan():
             out = layers.fully_connected(inputs=doc_vec, num_outputs=self.num_classes, activation_fn=None)
             return out
 
-    def BidirectionalGRUEncoder(self, inputs, name):
+    def BidirectionalLSTMEncoder(self, inputs, name):
         # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
         with tf.variable_scope(name):
-            GRU_cell_fw = rnn.GRUCell(self.hidden_size)
-            GRU_cell_bw = rnn.GRUCell(self.hidden_size)
+            LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
+            LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
             # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
             #  tuple of (outputs, output_states)
-            ((fw_outputs, bw_outputs), (_, _)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=GRU_cell_fw,
-                                                                                 cell_bw=GRU_cell_bw,
+            ((fw_outputs, bw_outputs), (_, _)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
+                                                                                 cell_bw=LSTM_cell_bw,
                                                                                  inputs=inputs,
                                                                                  sequence_length=self.length(inputs),
                                                                                  dtype=tf.float32)
@@ -142,13 +139,13 @@ class DeepHan():
 
     # 输出的状态向量按权值相加
     def AttentionLayer(self, inputs, name):
-        # inputs是GRU的输出，size是[batch_size, max_time, encoder_size(hidden_size * 2)]
+        # inputs是LSTM的输出，size是[batch_size, max_time, encoder_size(hidden_size * 2)]
         with tf.variable_scope(name):
             # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
-            # 因为使用双向GRU，所以其长度为2×hidden_szie
+            # 因为使用双向LSTM，所以其长度为2×hidden_szie
             # 一个context记录了所有的经过全连接后的word或者sentence的权重
             u_context = tf.Variable(tf.truncated_normal([self.hidden_size * 2]), name='u_context')
-            # 使用一个全连接层编码GRU的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
+            # 使用一个全连接层编码LSTM的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
             h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
             # alpha shape为[batch_size, max_time, 1]
             alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
