@@ -4,8 +4,8 @@ import tensorflow as tf
 from tensorflow.contrib import rnn
 from tensorflow.contrib import layers
 
-# =============== may be change
-num_classes = 737
+# =============== may be change  total 1177 488
+num_classes = 1177
 # =====================
 embedding_size = 128
 hidden_size = 100
@@ -52,8 +52,8 @@ class DeepHan():
             # word_embedded = word_vec2
         else:
             word_embedded = word_vec1
-        # doc_vec = self.doc2vec_rnn(word_embedded)
-        doc_vec = self.doc2vec_cnn(word_embedded)
+        doc_vec = self.doc2vec_rnn(word_embedded)
+        # doc_vec = self.doc2vec_cnn(word_embedded)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
