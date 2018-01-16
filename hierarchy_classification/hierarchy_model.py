@@ -46,6 +46,7 @@ class DeepHan():
         # 构建模型
         char_embedded = self.char2vec()  # 构建词向量矩阵，返回对应的词词向量 [None, None, None]=>[None, None, None,embedding_size]
         word_vec1 = self.word2vec(char_embedded)
+        use_skip_gram = False
         if use_skip_gram:
             word_vec2 = self.skip_gram()
             word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
@@ -54,8 +55,8 @@ class DeepHan():
             # word_embedded = word_vec1       # only char-embedding
             word_embedded = self.skip_gram()  # only skip_gram
 
-        doc_vec = self.doc2vec_rnn(word_embedded)
-        # doc_vec = self.doc2vec_cnn(word_embedded)
+        # doc_vec = self.doc2vec_rnn(word_embedded)
+        doc_vec = self.doc2vec_cnn(word_embedded)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
@@ -142,19 +143,19 @@ class DeepHan():
     # 输出的状态向量按权值相加
     def AttentionLayer(self, inputs, name):
         # inputs是LSTM的输出，size是[batch_size, max_time, encoder_size(hidden_size * 2)]
-        with tf.variable_scope(name):
-            # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
-            # 因为使用双向LSTM，所以其长度为2×hidden_szie
-            # 一个context记录了所有的经过全连接后的word或者sentence的权重
-            u_context = tf.Variable(tf.truncated_normal([self.hidden_size * 2]), name='u_context')
-            # 使用一个全连接层编码LSTM的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
-            h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
-            # alpha shape为[batch_size, max_time, 1]
-            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
-            # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
-            atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
-            return atten_output
-            # return tf.reduce_mean(inputs, axis=1)
+        # with tf.variable_scope(name):
+        #     # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
+        #     # 因为使用双向LSTM，所以其长度为2×hidden_szie
+        #     # 一个context记录了所有的经过全连接后的word或者sentence的权重
+        #     u_context = tf.Variable(tf.truncated_normal([self.hidden_size * 2]), name='u_context')
+        #     # 使用一个全连接层编码LSTM的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
+        #     h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
+        #     # alpha shape为[batch_size, max_time, 1]
+        #     alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
+        #     # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
+        #     atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
+        #     return atten_output
+        return tf.reduce_mean(inputs, axis=1)
 
     def length(self, sequences):
         # 动态展开
