@@ -51,7 +51,9 @@ class DeepHan():
             word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
             # word_embedded = word_vec2
         else:
-            word_embedded = word_vec1
+            # word_embedded = word_vec1       # only char-embedding
+            word_embedded = self.skip_gram()  # only skip_gram
+
         doc_vec = self.doc2vec_rnn(word_embedded)
         # doc_vec = self.doc2vec_cnn(word_embedded)
         out = self.classifer(doc_vec)
@@ -152,6 +154,7 @@ class DeepHan():
             # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
             atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
             return atten_output
+            # return tf.reduce_mean(inputs, axis=1)
 
     def length(self, sequences):
         # 动态展开
