@@ -28,7 +28,7 @@ class DataLoader(object):
         self.test_C = char_tokens_matrix[train_eval_line:]
         self.test_Y = code_tokens_matrix[train_eval_line:]
         self.test_size = len(self.test_W)
-        print('training size is', self.test_size)
+        print('testing size is', self.test_size)
 
     def shuffle(self):
         mark = list(range(self.train_size))

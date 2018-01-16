@@ -12,7 +12,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 batch_size = 128
 eval_batch_size = 1024
 
-epoch_num = 70
+epoch_num = 50
 
 keep_pro = 0.75
 
@@ -34,7 +34,7 @@ def validataion():
 
     MiP, MiR, MiF, P_NUM, T_NUM, hamming_loss = micro_score(outputs, loader.mapping_label(loader.test_Y))
     print(">>>>>>>> Final Result:  PredictNum:%.2f, TrueNum:%.2f" % (P_NUM, T_NUM))
-    print(">>>>>>>> Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f, Hamming Loss:.5f%" % (
+    print(">>>>>>>> Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f, Hamming Loss:%.5f" % (
         MiP, MiR, MiF, hamming_loss))
 
 
@@ -74,5 +74,5 @@ with tf.Session(config=config) as sess:
                 print("Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f, Hamming Loss:%.5f" % (
                     MiP, MiR, MiF, hamming_loss))
 
-        if epoch >= epoch_num / 2:
+        if epoch >= epoch_num / 4:
             validataion()
