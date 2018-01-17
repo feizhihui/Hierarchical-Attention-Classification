@@ -56,7 +56,9 @@ class DeepHan():
             word_embedded = self.skip_gram()  # only skip_gram
 
         # doc_vec = self.doc2vec_rnn(word_embedded)
-        doc_vec = self.doc2vec_cnn(word_embedded)
+        # doc_vec = self.doc2vec_cnn(word_embedded)
+        # doc_vec = self.doc2vec_cbow(word_embedded)
+        doc_vec = self.vanilla_rnn(word_embedded)
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
@@ -143,19 +145,18 @@ class DeepHan():
     # 输出的状态向量按权值相加
     def AttentionLayer(self, inputs, name):
         # inputs是LSTM的输出，size是[batch_size, max_time, encoder_size(hidden_size * 2)]
-        # with tf.variable_scope(name):
-        #     # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
-        #     # 因为使用双向LSTM，所以其长度为2×hidden_szie
-        #     # 一个context记录了所有的经过全连接后的word或者sentence的权重
-        #     u_context = tf.Variable(tf.truncated_normal([self.hidden_size * 2]), name='u_context')
-        #     # 使用一个全连接层编码LSTM的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
-        #     h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
-        #     # alpha shape为[batch_size, max_time, 1]
-        #     alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
-        #     # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
-        #     atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
-        #     return atten_output
-        return tf.reduce_mean(inputs, axis=1)
+        with tf.variable_scope(name):
+            # u_context是上下文的重要性向量，用于区分不同单词/句子对于句子/文档的重要程度,
+            # 因为使用双向LSTM，所以其长度为2×hidden_szie
+            # 一个context记录了所有的经过全连接后的word或者sentence的权重
+            u_context = tf.Variable(tf.truncated_normal([self.hidden_size * 2]), name='u_context')
+            # 使用一个全连接层编码LSTM的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
+            h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
+            # alpha shape为[batch_size, max_time, 1]
+            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
+            # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
+            atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
+            return atten_output
 
     def length(self, sequences):
         # 动态展开
@@ -206,3 +207,23 @@ class DeepHan():
         x_convs = tf.nn.dropout(x_convs, self.keep_prob)
 
         return x_convs
+
+    def doc2vec_cbow(self, word_embedded):
+        return tf.reduce_mean(word_embedded, axis=1)
+
+    def vanilla_rnn(self, inputs, name='vanilla_rnn'):
+        # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
+        with tf.variable_scope(name):
+            LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
+            LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
+            # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
+            #  tuple of (outputs, output_states)
+            ((_, _), (fw_states, bw_states)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
+                                                                               cell_bw=LSTM_cell_bw,
+                                                                               inputs=inputs,
+                                                                               sequence_length=self.length(
+                                                                                   inputs),
+                                                                               dtype=tf.float32)
+            # outputs的size是[batch_size*sent_in_doc, max_time, hidden_size*2]
+            outputs = tf.concat((fw_states, bw_states), 1)
+            return outputs
