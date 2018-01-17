@@ -218,12 +218,11 @@ class DeepHan():
             LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
             # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
             #  tuple of (outputs, output_states)
-            ((_, _), (fw_states, bw_states)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
-                                                                               cell_bw=LSTM_cell_bw,
-                                                                               inputs=inputs,
-                                                                               sequence_length=self.length(
-                                                                                   inputs),
-                                                                               dtype=tf.float32)
-            # outputs的size是[batch_size*sent_in_doc, max_time, hidden_size*2]
-            outputs = tf.concat((fw_states, bw_states), 1)
+            ((_, _), (fw_state, bw_state)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
+                                                                             cell_bw=LSTM_cell_bw,
+                                                                             inputs=inputs,
+                                                                             sequence_length=self.length(
+                                                                                 inputs),
+                                                                             dtype=tf.float32)
+            outputs = tf.concat((fw_state.h, bw_state.h), 1)
             return outputs
