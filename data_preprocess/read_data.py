@@ -11,6 +11,8 @@ all_char = []  # chinese character
 code_set = set()
 word_size = []
 m = re.compile(r'^[a-z]+$')
+# new_merge_samples_fullcode_preprocess.preprocess
+# new_merge_samples_code3_preprocess.preprocess
 with open('../data/new_merge_samples_fullcode_preprocess.preprocess', 'r', encoding='utf-8') as file:
     for line in file.readlines():
         columns = line.lower().split('|')
