@@ -12,7 +12,7 @@ hidden_size = 100
 
 grad_clip = 5
 init_learning_rate = 0.005  # CNN 0.001  # GR,U 0.002  # LST,M 0.005
-threshold = 0.20
+threshold = 0.25
 
 max_word_num = 400
 max_word_length = 5
@@ -45,10 +45,10 @@ class DeepHan():
 
         # 构建模型
         char_embedded = self.char2vec()  # 构建词向量矩阵，返回对应的词词向量 [None, None, None]=>[None, None, None,embedding_size]
-        # word_vec1 = self.word2vec(char_embedded)
-        word_vec1 = self.vanilla_rnn(tf.reshape(char_embedded, [-1, max_word_length, self.embedding_size]),
-                                     name='char_encode')
-        word_vec1 = tf.reshape(word_vec1, [-1, max_word_num, self.hidden_size * 2])
+        word_vec1 = self.word2vec(char_embedded)
+        # word_vec1 = self.vanilla_rnn(tf.reshape(char_embedded, [-1, max_word_length, self.embedding_size]),
+        #                              name='char_encode')
+        # word_vec1 = tf.reshape(word_vec1, [-1, max_word_num, self.hidden_size * 2])
 
         # use_skip_gram = False
         if use_skip_gram:
@@ -56,13 +56,13 @@ class DeepHan():
             word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
             # word_embedded = word_vec2
         else:
-            # word_embedded = word_vec1  # only char-embedding
-            word_embedded = self.skip_gram()  # only skip_gram
+            word_embedded = word_vec1  # only char-embedding
+            # word_embedded = self.skip_gram()  # only skip_gram
 
-        # doc_vec = self.doc2vec_rnn(word_embedded)
+        doc_vec = self.doc2vec_rnn(word_embedded)
         # doc_vec = self.doc2vec_cnn(word_embedded)
         # doc_vec = self.doc2vec_cbow(word_embedded)
-        doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
+        # doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
         out = self.classifer(doc_vec)
         self.out = out
         ones_t = tf.ones_like(out)
