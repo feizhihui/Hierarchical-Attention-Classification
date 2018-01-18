@@ -65,10 +65,7 @@ class DeepHan():
         # doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
         out = self.classifer(doc_vec)
         self.out = out
-        ones_t = tf.ones_like(out)
-        zeros_t = tf.zeros_like(out)
-        self.predict = tf.cast(tf.where(tf.greater(tf.sigmoid(out), threshold), ones_t, zeros_t),
-                               tf.int32)
+        self.predict = tf.cast((tf.greater_equal(tf.sigmoid(out), threshold)), tf.int32)
 
         self.back_propagate()
 
@@ -212,20 +209,20 @@ class DeepHan():
 
         return x_convs
 
-    def doc2vec_cbow(self, word_embedded):
-        return tf.reduce_mean(word_embedded, axis=1)
-
-    def vanilla_rnn(self, inputs, name='vanilla_rnn'):
-        # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
-        with tf.variable_scope(name):
-            LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
-            LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
-            # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
-            #  tuple of (outputs, output_states)
-            ((_, _), (fw_state, bw_state)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
-                                                                             cell_bw=LSTM_cell_bw,
-                                                                             inputs=inputs,
-                                                                             sequence_length=self.length(inputs),
-                                                                             dtype=tf.float32)
-            outputs = tf.concat((fw_state.h, bw_state.h), 1)
-            return outputs
+    # def doc2vec_cbow(self, word_embedded):
+    #     return tf.reduce_mean(word_embedded, axis=1)
+    #
+    # def vanilla_rnn(self, inputs, name='vanilla_rnn'):
+    #     # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
+    #     with tf.variable_scope(name):
+    #         LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
+    #         LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
+    #         # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
+    #         #  tuple of (outputs, output_states)
+    #         ((_, _), (fw_state, bw_state)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
+    #                                                                          cell_bw=LSTM_cell_bw,
+    #                                                                          inputs=inputs,
+    #                                                                          sequence_length=self.length(inputs),
+    #                                                                          dtype=tf.float32)
+    #         outputs = tf.concat((fw_state.h, bw_state.h), 1)
+    #         return outputs
