@@ -4,6 +4,7 @@ from dataloader import DataLoader
 from hierarchy_model import DeepHan
 import numpy as np
 import sklearn.metrics as metrics
+import pickle
 import os
 
 # LD_LIBRARY_PATH   	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
@@ -20,22 +21,28 @@ loader = DataLoader()
 model = DeepHan(loader.word_embeddings, loader.char_embeddings, decay_steps=loader.train_size / batch_size)
 
 
-def validataion():
+def validataion(localize=False):
     # model.prediction_fused
     print('begin to eval:')
     outputs = []
+    logits = []
     for i in range(0, loader.test_size, eval_batch_size):
         batch_W = loader.test_W[i:i + eval_batch_size]
         batch_C = loader.test_C[i:i + eval_batch_size]
-        y_pred = sess.run(model.predict,
-                          feed_dict={model.input_w: batch_W, model.input_c: batch_C, model.keep_prob: 1.})
+        y_pred, y_logit = sess.run([model.predict, model.logit],
+                                   feed_dict={model.input_w: batch_W, model.input_c: batch_C, model.keep_prob: 1.})
         outputs.append(y_pred)
+        logits.append(y_logit)
     outputs = np.concatenate(outputs, axis=0)
+    logits = np.concatenate(logits, axis=0)
 
     MiP, MiR, MiF, P_NUM, T_NUM, hamming_loss = micro_score(outputs, loader.mapping_label(loader.test_Y))
     print(">>>>>>>> Final Result:  PredictNum:%.2f, TrueNum:%.2f" % (P_NUM, T_NUM))
     print(">>>>>>>> Micro-Precision:%.3f, Micro-Recall:%.3f, Micro-F Measure:%.3f, Hamming Loss:%.5f" % (
         MiP, MiR, MiF, hamming_loss))
+    if localize:
+        with open('../cache/scores.pkl', 'wb') as file:
+            pickle.dump(logits, file)
 
 
 def micro_score(output, label):
@@ -76,3 +83,6 @@ with tf.Session(config=config) as sess:
 
         if epoch >= epoch_num / 4:
             validataion()
+
+    print('======= final =======')
+    validataion(localize=True)
