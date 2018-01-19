@@ -5,13 +5,13 @@ from tensorflow.contrib import rnn
 from tensorflow.contrib import layers
 
 # =============== may be change  total 1177 488
-num_classes = 1177
+num_classes = 488
 # =====================
 embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.005  # CNN 0.001  # GR,U 0.002  # LST,M 0.005
+init_learning_rate = 0.001  # CNN 0.001  # GR,U 0.002  # LST,M 0.005
 threshold = 0.25
 
 max_word_num = 400
@@ -59,8 +59,8 @@ class DeepHan():
             word_embedded = word_vec1  # only char-embedding
             # word_embedded = self.skip_gram()  # only skip_gram
 
-        doc_vec = self.doc2vec_rnn(word_embedded)
-        # doc_vec = self.doc2vec_cnn(word_embedded)
+        # doc_vec = self.doc2vec_rnn(word_embedded)
+        doc_vec = self.doc2vec_cnn(word_embedded)
         # doc_vec = self.doc2vec_cbow(word_embedded)
         # doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
         self.out = self.classifer(doc_vec)

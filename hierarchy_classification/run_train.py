@@ -8,12 +8,12 @@ import pickle
 import os
 
 # LD_LIBRARY_PATH   	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 batch_size = 128
 eval_batch_size = 1024
 
-epoch_num = 50  # 50
+epoch_num = 60  # 50
 
 keep_pro = 0.75  # 0.75
 
@@ -42,7 +42,7 @@ def validataion(localize=False):
         MiP, MiR, MiF, hamming_loss))
     if localize:
         with open('../cache/scores.pkl', 'wb') as file:
-            pickle.dump(logits, file)
+            pickle.dump((logits, loader.mapping_label(loader.test_Y)), file)
 
 
 def micro_score(output, label):
