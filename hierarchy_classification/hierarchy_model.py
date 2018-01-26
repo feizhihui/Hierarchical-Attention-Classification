@@ -5,14 +5,14 @@ from tensorflow.contrib import rnn
 from tensorflow.contrib import layers
 
 # =============== may be change  total 1177 488
-num_classes = 488
+num_classes = 1177
 # =====================
 embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.001  # CNN 0.001  # GR,U 0.002  # LST,M 0.005
-threshold = 0.25
+init_learning_rate = 0.005  # CNN 0.001  # GR,U 0.002  # LST,M 0.005
+threshold = 0.25  # 0.25
 
 max_word_num = 400
 max_word_length = 5
@@ -56,11 +56,11 @@ class DeepHan():
             word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
             # word_embedded = word_vec2
         else:
-            word_embedded = word_vec1  # only char-embedding
-            # word_embedded = self.skip_gram()  # only skip_gram
+            # word_embedded = word_vec1  # only char-embedding
+            word_embedded = self.skip_gram()  # only skip_gram
 
-        # doc_vec = self.doc2vec_rnn(word_embedded)
-        doc_vec = self.doc2vec_cnn(word_embedded)
+        doc_vec = self.doc2vec_rnn(word_embedded)
+        # doc_vec = self.doc2vec_cnn(word_embedded)
         # doc_vec = self.doc2vec_cbow(word_embedded)
         # doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
         self.out = self.classifer(doc_vec)
@@ -132,6 +132,9 @@ class DeepHan():
         with tf.variable_scope(name):
             LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
             LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
+
+            LSTM_cell_fw = rnn.DropoutWrapper(LSTM_cell_fw, output_keep_prob=self.keep_prob)
+            LSTM_cell_bw = rnn.DropoutWrapper(LSTM_cell_bw, output_keep_prob=self.keep_prob)
             # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
             #  tuple of (outputs, output_states)
             ((fw_outputs, bw_outputs), (_, _)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
@@ -212,17 +215,21 @@ class DeepHan():
         # def doc2vec_cbow(self, word_embedded):
         #     return tf.reduce_mean(word_embedded, axis=1)
         #
-        # def vanilla_rnn(self, inputs, name='vanilla_rnn'):
-        #     # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
-        #     with tf.variable_scope(name):
-        #         LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
-        #         LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
-        #         # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
-        #         #  tuple of (outputs, output_states)
-        #         ((_, _), (fw_state, bw_state)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
-        #                                                                          cell_bw=LSTM_cell_bw,
-        #                                                                          inputs=inputs,
-        #                                                                          sequence_length=self.length(inputs),
-        #                                                                          dtype=tf.float32)
-        #         outputs = tf.concat((fw_state.h, bw_state.h), 1)
-        #         return outputs
+
+    def vanilla_rnn(self, inputs, name='vanilla_rnn'):
+        # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
+        with tf.variable_scope(name):
+            LSTM_cell_fw = rnn.LSTMCell(self.hidden_size)
+            LSTM_cell_bw = rnn.LSTMCell(self.hidden_size)
+
+            LSTM_cell_fw = rnn.DropoutWrapper(LSTM_cell_fw, output_keep_prob=self.keep_prob)
+            LSTM_cell_bw = rnn.DropoutWrapper(LSTM_cell_bw, output_keep_prob=self.keep_prob)
+            # fw_outputs和bw_outputs的size都是[batch_size*sent_in_doc, word_in_sent, embedding_size]
+            #  tuple of (outputs, output_states)
+            ((_, _), (fw_state, bw_state)) = tf.nn.bidirectional_dynamic_rnn(cell_fw=LSTM_cell_fw,
+                                                                             cell_bw=LSTM_cell_bw,
+                                                                             inputs=inputs,
+                                                                             sequence_length=self.length(inputs),
+                                                                             dtype=tf.float32)
+            outputs = tf.concat((fw_state.h, bw_state.h), 1)
+            return outputs

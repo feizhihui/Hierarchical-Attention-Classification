@@ -4,7 +4,7 @@ import pickle
 
 train_eval_rate = 0.9
 # may be change
-num_classes = 488
+num_classes = 1177
 
 
 class DataLoader(object):
@@ -16,6 +16,8 @@ class DataLoader(object):
         self.char_embeddings = np.load('../cache/char_embeddings.npy')
         self.word_embeddings = np.load('../cache/word_embeddings.npy')
 
+        # tnum = np.sum(self.mapping_label(code_tokens_matrix))
+        # print(tnum)
         train_eval_line = int(train_eval_rate * int(len(word_tokens_matrix)))
 
         self.train_W = word_tokens_matrix[:train_eval_line]
