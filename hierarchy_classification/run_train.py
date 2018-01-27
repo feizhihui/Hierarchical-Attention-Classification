@@ -13,7 +13,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 batch_size = 128
 eval_batch_size = 1024
 
-epoch_num = 60  # 50
+epoch_num = 70  # 50
 
 keep_pro = 0.75  # 0.75
 
