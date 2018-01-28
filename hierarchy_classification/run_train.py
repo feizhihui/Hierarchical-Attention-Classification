@@ -13,9 +13,9 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 batch_size = 128
 eval_batch_size = 1024
 
-epoch_num = 80  # 50
+epoch_num = 40  # 50
 
-keep_pro = 0.75  # 0.75
+keep_pro = 0.9  # 0.75
 
 loader = DataLoader()
 model = DeepHan(loader.word_embeddings, loader.char_embeddings, decay_steps=loader.train_size / batch_size)
