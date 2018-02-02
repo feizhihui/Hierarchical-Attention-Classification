@@ -15,7 +15,7 @@ with open('../cache/all_char.pkl', 'rb') as file:
 
 # 构建模型
 print('begin to train char2vec model...')
-model = word2vec.Word2Vec(sentences, size=128, min_count=5)  # default size 100
+model = word2vec.Word2Vec(sentences, size=128, min_count=5, workers=16)  # default size 100
 model.save('../MODEL/char2vec.model')
 # 保存词向量
 model.wv.save_word2vec_format('../data/char_embeddings.128', binary=False)

@@ -2,7 +2,7 @@
 import pickle
 import numpy as np
 
-word_size = 400
+word_size = 700
 char_size = 5
 
 with open('../cache/all_text.pkl', 'rb') as file:

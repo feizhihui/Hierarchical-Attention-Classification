@@ -12,8 +12,8 @@ with open('../data/MIMIC3_RAW_DSUMS', 'r') as file, open('../data/MIMIC3_DSUMS',
         raw_dsum = rows[6].strip('"')
         codes = rows[5].strip('"').split(',')
 
-        fileWriter.write(str(i + 1) + '|')
+        fileWriter.write(str(i) + '|')
         for code in codes[:-1]:
             fileWriter.write(code + ',')
         fileWriter.write(codes[-1] + '|')
-        fileWriter.write(raw_dsum + '\n')
+        fileWriter.write(raw_dsum)

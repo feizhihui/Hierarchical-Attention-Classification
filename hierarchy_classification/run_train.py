@@ -5,18 +5,20 @@ from hierarchy_model import DeepHan
 import numpy as np
 import sklearn.metrics as metrics
 import pickle
+import time
 import os
 
 # LD_LIBRARY_PATH   	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 batch_size = 128
-eval_batch_size = 1024
+eval_batch_size = 512
 
-epoch_num = 40  # 50
+epoch_num = 50  # 50
 
-keep_pro = 0.9  # 0.75
+keep_pro = 0.9
 
+starttime = time.time()
 loader = DataLoader()
 model = DeepHan(loader.word_embeddings, loader.char_embeddings, decay_steps=loader.train_size / batch_size)
 
@@ -86,3 +88,7 @@ with tf.Session(config=config) as sess:
 
     print('======= final =======')
     validataion(localize=True)
+
+endtime = time.time()
+
+print((endtime - starttime) / 3600.)
