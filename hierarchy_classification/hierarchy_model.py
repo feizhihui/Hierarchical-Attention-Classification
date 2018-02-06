@@ -50,7 +50,7 @@ class DeepHan():
         #                              name='char_encode')
         # word_vec1 = tf.reshape(word_vec1, [-1, max_word_num, self.hidden_size * 2])
 
-        # use_skip_gram = False
+        use_skip_gram = False
         if use_skip_gram:
             word_vec2 = self.skip_gram()
             word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
@@ -58,11 +58,10 @@ class DeepHan():
         else:
             # word_embedded = word_vec1  # only char-embedding
             word_embedded = self.skip_gram()  # only skip_gram
-
-        doc_vec = self.doc2vec_rnn(word_embedded)
+        # doc_vec = self.doc2vec_rnn(word_embedded)
         # doc_vec = self.doc2vec_cnn(word_embedded)
         # doc_vec = self.doc2vec_cbow(word_embedded)
-        # doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
+        doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
         self.out = self.classifer(doc_vec)
         self.logit = tf.nn.sigmoid(self.out)
         self.predict = tf.cast((tf.greater_equal(tf.sigmoid(self.out), threshold)), tf.int32)
@@ -212,9 +211,8 @@ class DeepHan():
 
         return x_convs
 
-        # def doc2vec_cbow(self, word_embedded):
-        #     return tf.reduce_mean(word_embedded, axis=1)
-        #
+    def doc2vec_cbow(self, word_embedded):
+        return tf.reduce_mean(word_embedded, axis=1)
 
     def vanilla_rnn(self, inputs, name='vanilla_rnn'):
         # 输入inputs的shape是[batch_size*sent_in_doc, word_in_sent, embedding_size]
