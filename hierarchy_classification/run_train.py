@@ -8,12 +8,12 @@ import pickle
 import os
 
 # LD_LIBRARY_PATH   	/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 batch_size = 128
 eval_batch_size = 1024
 
-epoch_num = 40  # 50
+epoch_num = 60  # 50
 
 keep_pro = 0.9  # 0.75
 

@@ -13,7 +13,8 @@ word_size = []
 m = re.compile(r'^[a-z]+$')
 # new_merge_samples_fullcode_preprocess.preprocess
 # new_merge_samples_code3_preprocess.preprocess
-with open('../data/new_merge_samples_code3_preprocess.preprocess', 'r', encoding='utf-8') as file:
+# new_merge_samples_preprocess_segtest.segtest
+with open('../data/new_merge_samples_preprocess_segtest.segtest', 'r', encoding='utf-8') as file:
     for line in file.readlines():
         columns = line.lower().split('|')
         code_list = columns[1].split(',')

@@ -5,7 +5,7 @@ from tensorflow.contrib import rnn
 from tensorflow.contrib import layers
 
 # =============== may be change  total 1177 488
-num_classes = 488
+num_classes = 1177
 # =====================
 embedding_size = 128
 hidden_size = 100

@@ -4,7 +4,7 @@ import pickle
 
 train_eval_rate = 0.9
 # may be change
-num_classes = 488
+num_classes = 1177
 
 
 class DataLoader(object):
