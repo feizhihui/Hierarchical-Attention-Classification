@@ -11,7 +11,7 @@ embedding_size = 128
 hidden_size = 100
 
 grad_clip = 5
-init_learning_rate = 0.003  # CNN 0.001  # GR,U 0.002  # LST,M 0.005  # RNN 0.002
+init_learning_rate = 0.005  # CNN 0.001  # GR,U 0.002  # LST,M 0.005  # RNN 0.002
 threshold = 0.20  # 0.25
 
 max_word_num = 700
@@ -50,7 +50,7 @@ class DeepHan():
         #                              name='char_encode')
         # word_vec1 = tf.reshape(word_vec1, [-1, max_word_num, self.hidden_size * 2])
 
-        use_skip_gram = False
+        use_skip_gram = True
         if use_skip_gram:
             word_vec2 = self.skip_gram()
             word_embedded = tf.concat([word_vec1, word_vec2], axis=2)
@@ -58,10 +58,10 @@ class DeepHan():
         else:
             # word_embedded = word_vec1  # only char-embedding
             word_embedded = self.skip_gram()  # only skip_gram
-        # doc_vec = self.doc2vec_rnn(word_embedded)
+        doc_vec = self.doc2vec_rnn(word_embedded)
         # doc_vec = self.doc2vec_cnn(word_embedded)
         # doc_vec = self.doc2vec_cbow(word_embedded)
-        doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
+        # doc_vec = self.vanilla_rnn(word_embedded, name='doc_embedding')
         self.out = self.classifer(doc_vec)
         self.logit = tf.nn.sigmoid(self.out)
         self.predict = tf.cast((tf.greater_equal(tf.sigmoid(self.out), threshold)), tf.int32)
@@ -156,9 +156,9 @@ class DeepHan():
             # 使用一个全连接层编码LSTM的输出的到期隐层表示,输出u的size是[batch_size, max_time, hidden_size * 2]
             h = layers.fully_connected(inputs, self.hidden_size * 2, activation_fn=tf.nn.tanh)
             # alpha shape为[batch_size, max_time, 1]
-            alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
+            self.alpha = tf.nn.softmax(tf.reduce_sum(tf.multiply(h, u_context), axis=2, keep_dims=True), dim=1)
             # reduce_sum之前shape为[batch_szie, max_time, hidden_szie*2]，之后shape为[batch_size, hidden_size*2]
-            atten_output = tf.reduce_sum(tf.multiply(inputs, alpha), axis=1)
+            atten_output = tf.reduce_sum(tf.multiply(inputs, self.alpha), axis=1)
             return atten_output
 
     def length(self, sequences):

@@ -14,7 +14,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 batch_size = 128
 eval_batch_size = 512
 
-epoch_num = 50  # 50
+epoch_num = 40  # 50
 
 keep_pro = 0.9
 
@@ -28,15 +28,19 @@ def validataion(localize=False):
     print('begin to eval:')
     outputs = []
     logits = []
+    alphas = []
     for i in range(0, loader.test_size, eval_batch_size):
         batch_W = loader.test_W[i:i + eval_batch_size]
         batch_C = loader.test_C[i:i + eval_batch_size]
-        y_pred, y_logit = sess.run([model.predict, model.logit],
-                                   feed_dict={model.input_w: batch_W, model.input_c: batch_C, model.keep_prob: 1.})
+        y_pred, alpha, y_logit = sess.run([model.predict, model.alpha, model.logit],
+                                          feed_dict={model.input_w: batch_W, model.input_c: batch_C,
+                                                     model.keep_prob: 1.})
         outputs.append(y_pred)
         logits.append(y_logit)
+        alphas.append(alpha)
     outputs = np.concatenate(outputs, axis=0)
     logits = np.concatenate(logits, axis=0)
+    alphas = np.concatenate(alphas, axis=0)
 
     MiP, MiR, MiF, P_NUM, T_NUM, hamming_loss = micro_score(outputs, loader.mapping_label(loader.test_Y))
     print(">>>>>>>> Final Result:  PredictNum:%.2f, TrueNum:%.2f" % (P_NUM, T_NUM))
@@ -45,6 +49,8 @@ def validataion(localize=False):
     if localize:
         with open('../cache/scores.pkl', 'wb') as file:
             pickle.dump((logits, loader.mapping_label(loader.test_Y)), file)
+        with open('../cache/alphas.pkl', 'wb') as file:
+            pickle.dump(alphas, file)
 
 
 def micro_score(output, label):
